@@ -1,0 +1,82 @@
+{% include 'header.html' %}
+<main id="main" class="main">
+  <div class="pagetitle">
+    <h1>Descargas</h1>
+    <nav>
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="/index">Inicio</a></li>
+        <li class="breadcrumb-item">Descargas</li>
+      </ol>
+    </nav>
+  </div>
+  <section class="section">
+    <div class="row">
+      <div class="col-12 col-md-12 offset-md-12">
+        <div class="col-lg-12">
+          <div class="card">
+            <div class="card-body">
+              <h5 class="card-title">Registro de Descargas</h5>
+              <form
+                class="row g-3"
+                method="POST"
+                action="/guardar_descarga"
+                enctype="multipart/form-data"
+                id=""
+              >
+                <div class="col-md-12">
+                  <label for="inputName5" class="form-label">Url</label>
+                  <input
+                    type="text"
+                    class="form-control"
+                    id="url_des"
+                    name="url_des"
+                  />
+                </div>
+                <div class="col-md-12">
+                  <label for="inputName5" class="form-label">Peso</label>
+                  <input
+                    type="text"
+                    class="form-control"
+                    id="peso_des"
+                    name="peso_des"
+                  />
+                </div>
+                <div class="col-md-12">
+                  <label for="inputName5" class="form-label"
+                    >Fecha y Hora</label
+                  >
+                  <input
+                    type="date-time"
+                    class="form-control"
+                    id="fecha_hora_des"
+                    name="fecha_hora_des"
+                  />
+                </div>
+                <div class="col-md-12">
+                  <label for="" class="form-label">Usuario</label>
+                  <select name="usuario" required class="form-select">
+                    <option value="">Seleccione un usuario</option>
+                    {% for usuario in usuarios %}
+                    <option value="{{ usuario['id_usu'] }}">
+                      {{ usuario['nombre_usu'] }}
+                    </option>
+                    {% endfor %}
+                  </select>
+                </div>
+                <div class="text-center">
+                  <button type="submit" class="btn btn-primary btn-registrar">
+                    Registrar <i class="bx bx-save"></i>
+                  </button>
+                  <button type="reset" class="btn btn-danger btn-cancelar">
+                    Cancelar <i class="bx bx-message-square-x"></i>
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+{% include 'footer.html' %}

@@ -1,0 +1,61 @@
+{% include 'header.html' %}
+<main id="main" class="main">
+  <div class="pagetitle">
+    <h1>Departamentos</h1>
+    <nav>
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="/index">Inicio</a></li>
+        <li class="breadcrumb-item">Departamentos</li>
+      </ol>
+    </nav>
+  </div>
+  <section class="section">
+    <div class="row">
+      <div class="col-12 col-md-12 offset-md-12">
+        <div class="col-lg-12">
+          <div class="card">
+            <div class="card-body">
+              <h5 class="card-title">Registro de Departamentos</h5>
+              <form
+                class="row g-3"
+                method="POST"
+                action="/guardar_departamento"
+                enctype="multipart/form-data"
+                id=""
+              >
+                <div class="col-md-12">
+                  <label for="inputName5" class="form-label">Nombre</label>
+                  <input
+                    type="text"
+                    class="form-control"
+                    id="nombre_dep"
+                    name="nombre_dep"
+                  />
+                </div>
+                <div class="col-md-12">
+                  <label for="inputName5" class="form-label">Descripcion</label>
+                  <textarea
+                    type="text"
+                    class="form-control"
+                    id="descripcion_dep"
+                    name="descripcion_dep"
+                    rows="3"
+                  ></textarea>
+                </div>
+                <div class="text-center">
+                  <button type="submit" class="btn btn-primary btn-registrar">
+                    Registrar <i class="bx bx-save"></i>
+                  </button>
+                  <button type="reset" class="btn btn-danger btn-cancelar">
+                    Cancelar <i class="bx bx-message-square-x"></i>
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+{% include 'footer.html' %}
