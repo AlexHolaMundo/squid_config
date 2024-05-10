@@ -1,12 +1,21 @@
 import mysql.connector
 import subprocess
 from flask import Flask, redirect, url_for, session, render_template, request
-from routes import prohibidas, usuarios, admitidas
-from livereload import Server
+from routes import prohibidas, usuarios, admitidas, configuracion
+
 
 app = Flask(__name__, static_folder='static', template_folder='templates')
 app.secret_key = b'_5#y2L"F4Q8z\n\xec]/'
 
+linea_acl_localnet = 1
+linea_acl_mired = 22
+linea_acl_working = 25
+linea_acl_usuarios_pass = 26
+linea_http_usuarios_pass = 47
+linea_http_working = 48
+linea_http_mired = 51
+linea_http_localnet = 52
+linea_http_deny = 60
 ruta_archivo = '/etc/squid/squid.conf'
 
 conn = mysql.connector.connect(
@@ -18,6 +27,7 @@ conn = mysql.connector.connect(
 prohibidas.configure_routes(app,conn)
 usuarios.configure_routes(app, conn)
 admitidas.configure_routes(app, conn)
+configuracion.configure_routes(app, conn)
 
 # Ruta para mostrar el formulario de inicio de sesión
 @app.route("/login", methods=["GET", "POST"])
@@ -119,13 +129,19 @@ def configurar_acl():
         conn.commit()
 
         # Generar la configuración de ACL de Squid
-        configuracion_acl = f'''
-acl nueva_red src {ip_acl}/{mascara_acl}
-http_access allow nueva_red
-'''
+        configuracion_acl = f'''acl localnet src {ip_acl}/{mascara_acl}'''
+        habilitar_acl = f'''http_access allow localnet'''
+
         # Agregar la nueva ACL al archivo de configuración de Squid
-        with open(ruta_archivo, 'a') as archivo_configuracion:
-            archivo_configuracion.write(configuracion_acl)
+        with open(ruta_archivo, 'r+') as archivo_configuracion:
+            lineas = archivo_configuracion.readlines()
+
+            if len(lineas) >= 2:
+                lineas[linea_acl_localnet] = configuracion_acl + '\n'
+                lineas[linea_http_localnet] = habilitar_acl + '\n'
+            archivo_configuracion.seek(0)
+            archivo_configuracion.writelines(lineas)
+            archivo_configuracion.truncate()
 
         # Reiniciar Squid para aplicar los cambios
         subprocess.run(['sudo', 'squid', '-k', 'reconfigure'])
@@ -133,6 +149,7 @@ http_access allow nueva_red
         return 'ACL configurada correctamente y Squid reiniciado'
     except ValueError :
         return 'Error: La IP o la máscara no son válidas' + ValueError.__cause__
+
 
 # Función para obtener el ID de un usuario dado su nombre de usuario
 def obtener_id_usuario(nombre_usu):
@@ -204,15 +221,6 @@ def cerrar_sesion():
     session.pop("nombre_usa", None)  # Elimina el elemento de la sesión correspondiente al usuario
     return redirect(url_for("mostrar_formulario_login"))
 
-# Crear objeto Server de Livereload
-server = Server(app.wsgi_app)
-
-# Agregar rutas a observar para cambios
-server.watch('**/*.html')
-server.watch('**/*.css')
-server.watch('**/*.js')
-server.watch('**/*.py')
-server.watch('**/*.txt')
 
 if __name__ == '__main__':
-    app.run(port=8081)
+    app.run(port=8081, debug=True)
