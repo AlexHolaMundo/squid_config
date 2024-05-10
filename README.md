@@ -21,3 +21,8 @@ pip install flask
 pip install livereload
 pip install mysql-connector-python
 ```
+### 3. Ejecutar el proyecto 
+
+```bash
+python app.py
+```
